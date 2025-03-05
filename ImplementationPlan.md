@@ -20,7 +20,8 @@ representation and uses this for certain optimizations in a bit-flag style manne
 There are two options that come to mind on how to extend the HIR:
 
 - Add a new variant to `HirKind` for complex lookarounds (what to call this?)
-- Wrap the simple lookaround variant in a new enum (do we reuse the name `Look`?)
+  ==> We decided to go this route and call it `Lookaround` for now.
+- ~Wrap the simple lookaround variant in a new enum (do we reuse the name `Look`?)~
 
 We also need to deal with the `Properties` of the new HIR values. It features
 fields like whether the value is a literal, it's minimum match length, etc.
@@ -64,6 +65,9 @@ To add the instructions for setting the lookaround state, we need to extend the
 `State` enum in the builder. Furhtermore, we need to extend the `State` enum
 in the NFA.
 
+Somewhere, there will also be the code for reversing the NFA. We need to make
+sure lookarounds are reversed properly.
+
 ### Lookaround algorithm
 
 It might be possible to use the capture group slots for storing the lookaround
@@ -78,8 +82,17 @@ will have to be done in the `PikeVM::epsilon_closure_explore` function.
 
 ### Decision making in meta-engine
 
-TODO
+The decision procedure is implemented in the `strategy::Core`. It looks as if
+there is no need in updating this since all but the `PikeVM` engines should
+either fail to build or fail to find matches as soon as they encounter
+unsupported instructions. Of course it would probably be better for performance
+to skip directly to the `PikeVM` whenever there are lookarounds in the regex.
 
 ### Prefilter adjustments
 
-TODO
+Prefilters for the default creation path of the meta-engine are selected
+in the `strategy::new` function.
+
+Some code for extracting prefilters is also located in
+`meta::reverse_inner::extract` and the functions it calls. However, it might not
+be necessary to change things there, as this seems to be a very low level api.
