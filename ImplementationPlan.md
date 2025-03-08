@@ -14,14 +14,15 @@
 
 `hir` values have a `HirKind` and some `Properties`.
 
-`HirKind` already features a tuple variant `HirKind::Look` for simple lookarounds.
-The `Look` enum is one of the few enums that makes use of explicit `u32`
-representation and uses this for certain optimizations in a bit-flag style manner.
-There are two options that come to mind on how to extend the HIR:
+`HirKind` already features a tuple variant `HirKind::Look` for simple
+lookarounds. The `Look` enum is one of the few enums that makes use of explicit
+`u32` representation and uses this for certain optimizations in a bit-flag style
+manner. There are two options that come to mind on how to extend the HIR:
 
 - Add a new variant to `HirKind` for complex lookarounds (what to call this?)
-  ==> We decided to go this route and call it `Lookaround` for now.
-- ~Wrap the simple lookaround variant in a new enum (do we reuse the name `Look`?)~
+  ==> We decided to go this route and call it `LookAround` for now.
+- ~~Wrap the simple lookaround variant in a new enum (do we reuse the name
+  `Look`?)~~
 
 We also need to deal with the `Properties` of the new HIR values. It features
 fields like whether the value is a literal, it's minimum match length, etc.
@@ -31,16 +32,16 @@ no semantically incorrect optimizations are performed.
 
 ### Parsing support
 
-The in the `ast` module, `ErrorKind::UnsupportedLookAround` would need
-documentation update.
+The in the `ast` module, `ErrorKind::UnsupportedLookAround` would need to be
+replaced with `ErrorKind::UnsupportedLookAhead`. Additionally a new error
+`ErrorKind::UnsupportedCaptureInLookBehind` would need to be added.
 
-The `Ast`, similar to the `HirKind`, has an `Assertion`
-variant with a boxed `Assertion` struct. This struct, in turn, has an associated
-`span` and a `kind` field of type `AssertionKind`. The `AssertionKind` enum
-features the simple assertion variants, however, this time not using bitfield
-optimizations. Hence we could simply add new variants for the complex
-lookarounds. The `Ast::has_subexprs` function would need updating according to
-the assertion type.
+The `Ast`, similar to the `HirKind`, has an `Assertion` variant with a boxed
+`Assertion` struct. Analogously to the change to the `hir`, a new variant is
+added to the `Ast` enum, `LookAhead`. It contains the `span`, the `kind`
+(positive/negative look-ahead/look-behind), and the inner expression `ast`. All
+code matching on `Ast` has to be inspected to see how the new variant should be
+handled.
 
 The `ParserI::parse_group` function currently returns an `Either<,>` enum value,
 being one of `SetFlags` or `Group`. We need to extend this to allow returning
