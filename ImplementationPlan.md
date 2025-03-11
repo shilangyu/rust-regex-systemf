@@ -2,13 +2,13 @@
 
 ## required steps
 
-- Extend HIR with lookarounds
-- Implement parsing support for lookarounds in regex-syntax
-- Implement translation of AST to HIR for lookarounds
-- Implement translation of HIR to NFA for lookarounds
-- Implement lookaround algorithm for NFA
-- Implement decision making in meta-engine for lookarounds
-- Investigate prefilter impact on lookarounds
+- [x] Extend HIR with lookarounds
+- [ ] Implement parsing support for lookarounds in regex-syntax
+- [ ] Implement translation of AST to HIR for lookarounds
+- [x] Implement translation of HIR to NFA for lookarounds
+- [x] Implement lookaround algorithm for NFA
+- [ ] Implement decision making in meta-engine for lookarounds
+- [ ] Investigate prefilter impact on lookarounds
 
 ### HIR extension
 
