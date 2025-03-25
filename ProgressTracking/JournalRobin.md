@@ -19,3 +19,13 @@
 - Implemented execution of new instructions
 - Made compilation of lookaround machinery conditional on whether or not the
   expression contains lookarounds
+
+# Week 4
+
+- Implemented top-level unit tests for look-behinds
+- Added build errors for engines that do not support lookarounds
+- Turned off prefiltering for regexes with lookarounds
+
+# Week 5
+
+- Performed benchmarking via rebar
