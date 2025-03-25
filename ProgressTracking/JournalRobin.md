@@ -29,3 +29,5 @@
 # Week 5
 
 - Performed benchmarking via rebar
+- Investigated what parts are fuzz-tested
+- Wrote draft for the pull request

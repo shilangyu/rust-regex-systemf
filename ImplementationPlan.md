@@ -7,9 +7,9 @@
 - [x] Implement translation of AST to HIR for lookarounds
 - [x] Implement translation of HIR to NFA for lookarounds
 - [x] Implement lookaround algorithm for NFA
-- [ ] Implement decision making in meta-engine for lookarounds
-- [ ] Investigate prefilter impact on lookarounds
-- [ ] Benchmarking, testing, fuzzing
+- [x] Implement decision making in meta-engine for lookarounds
+- [x] Investigate prefilter impact on lookarounds
+- [x] Benchmarking, testing, fuzzing
 - [ ] Open PR
 
 ### HIR extension
