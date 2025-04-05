@@ -1,53 +1,54 @@
-# Implement look-behind assertions
+# Add support for unbounded look-behind expressions
+
+As an example consider the regex `(?<=Title:\s+)\w+` which would match the
+following strings (matches underlined with `~`):
+
+```
+Title: hello world
+       ~~~~~~~~~~~
+```
+
+```
+Title: Title: foo
+       ~~~~~
+              ~~~
+```
+
+But **fails** to match:
+
+- `No heading`
+- `title: bad case`
+- `Title:nospace`
 
 ## What
 
-This PR implements a streaming algorithm for supporting look-behind assertions
-in the regex crate. The algorithm supports arbitrarily nested look-behinds and
-all features of regex expressions supported by the crate are usable within
-look-behind expressions, with the exception of capture groups.
-
-The algorithm is implemented in the PikeVM and the necessary changes in
-`regex-syntax` and the other engines to use look-behind expressions from the
-`regex` crate are included.
-
-This PR is a MVP for adding support for general look-around assertions. The
-implementation of look-_ahead_ assertions is not included, and doing so will
-require the discussion of a space-time trade-off, as supporting look-ahead
-expressions is not possible in the same streaming fashion as for look-behinds.
-Furthermore, supporting capture groups within look-around expressions will
-require different capture semantics than the ones currently used when matching
-regexes and might hence not be desirable to implement. Finally, the backtracking
-engine, in theory, supports look-arounds, but it is unclear how to best
-integrate our current implementation, focused on the PikeVM, into the
-bounded backtracker.
-
+This PR implements the streaming algorithm from
+[Linear Matching of JavaScript Regular Expressions (Section 4.4)](https://aurele-barriere.github.io/papers/linearjs.pdf#page=13)
+for unbounded look-behinds. The same algorithm has been
+[implemented and merged into V8](https://chromium-review.googlesource.com/c/v8/v8/+/5093860).
 The addition of look-around expressions to this crate was mentioned previously
-in the following discussion post: [#1153](https://github.com/rust-lang/regex/discussions/1153).
+in [#1153](https://github.com/rust-lang/regex/discussions/1153).
 
-## Why
+This PR adds support for positive and negative look-behinds with arbitrary
+nesting. With the following limitations
 
-General look-around assertions are a powerful extension to the features of a
-regex engine. The reason they were not supported up to this point is that it
-was long thought that they could not be implemented in a way that respects the
-runtime complexity guarantees of the regex crate (linear in the length of the
-pattern and the haystack).
+### Limitations
 
-Theoretical work by Aurèle Barrière and Clément Pit-Claudel has shown that this
-assumption is incorrect and that look-around assertions can in fact be
-implemented in linear time. In their work [Linear Matching of JavaScript Regular Expressions](https://aurele-barriere.github.io/papers/linearjs.pdf)
-they demonstrate how to do so for the semantics of JavaScript regexes.
+- Look-behind expressions cannot contain capture groups
+- The algorithm is implemented only in the PikeVM and with prefiters off
+- Only look-behinds and no look-aheads
 
-As the regex crate is the de-facto standard for regex matching in Rust, it is
-desirable to support look-around assertions in this crate as well, which is
-why we propose this PR.
+With the current capture group semantics, no linear time algorithm which would
+allow for capture groups in look-arounds is known. However, look-behinds could
+be implemented in other engines and with prefilters on. Look-aheads could also
+be implemented with additional memory.
 
 ## How
 
 We implemented the streaming algorithm presented in Section 4.4 of the paper
 mentioned above. The algorithm works by running the sub-automata for any
-look-behind assertions in parallel to the main automaton. This is achieved by
-compiling the look-behind assertions regularly but patching the resulting NFA
+look-behind expressions in parallel to the main automaton. This is achieved by
+compiling the look-behind expressions as usual but patching the resulting NFA
 states into a union with the main automaton's states. The union is added per
 pattern for multi-pattern searches.
 
@@ -58,19 +59,21 @@ to be recorded in a global look-around table.
 The main automaton (and the sub-automata in the case of nested look-behinds) can
 then read from this table by means of a `CheckLookAround` instruction and
 compare the stored index with the current position in the haystack. These states
-work as conditional epsilon transitions, similar to the already supported
-simple lookaround assertions.
+work as conditional epsilon transitions, similar to the already supported "look"
+assertions (e.g. `^`, `\b`, `$`).
 
 ## Testing
 
 We have added unit tests for the new functionality in the individual test
-modules to test the new parsing, translation and compilation features. We have
+modules to test the new parsing, translation, and compilation features. We have
 further added integration tests in the form of a new toml file. All engines
-apart from the PikeVM will fail to build when look-behind assertions are present
-in the pattern. This fact was used to filter out the tests containing
-look-behinds for engines other than the PikeVM and Meta engine.
+apart from the PikeVM will reject look-behind expressions. Thus tests containing
+look-around expressions are filtered out for engines other than the PikeVM and
+Meta engine.
 
 ## Performance
+
+TODO: redo with new benchmarks
 
 We forked the `rebar` repository and copied the engine definitions for the
 `regex` crate and called the new definition `regex-lookbehind`. We added this
@@ -116,8 +119,10 @@ The table below shows the output of `rebar cmp -t 1.1 all.csv`.
 
 ## Future Work
 
-We would love to get feedback on the current state of the implementation and
-discuss the mentioned space-time trade-off for supporting look-ahead assertions.
-Furthermore, we would like to discuss the possibility of supporting capture
-groups within look-around assertions and how to best integrate support for
-look-around assertions into other engines where possible.
+We would love to get feedback on the implementation.
+
+The next steps are to work on the current limitations. Namely, implement support
+in more engines and enable prefilters. Additionally, support for look-aheads
+would be implemented if the additional memory cost is acceptable.
+
+We are open to the discussion about any of the above.
