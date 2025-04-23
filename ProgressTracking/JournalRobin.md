@@ -36,7 +36,7 @@
 - Not much done due to sickness
 - Wrote benchmarking script for Clément
 
-# Week 7
+# Week 7 + 8 (Aurèle away in week 7)
 - Extracted regexes with lookbehinds from the Snort ruleset
   - Problem: due to licensing, most likely cannot redistribute,
     which means need very clear instructions on how the dataset
@@ -65,3 +65,12 @@
   it saves us from explaining ourselves to the maintainer as we have not opened a PR
   yet, but terrible because it looks as if we now definitely need to rewrite the
   entire look-behind architecture and somehow allow multi-NFA compilation.
+
+# Week 9
+
+- Redesigned nfa setup to have list of starting states for each lb
+- Rewrote search procedure to track lb threads seperately
+- Added regression tests for the incorrect cases discovered in performance investigations
+
+# Week 10 (easter break)
+- Implemented faster matchall by means of storing lb thread states in cache
