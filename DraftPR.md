@@ -4,8 +4,8 @@ As an example consider the regex `(?<=Title:\s+)\w+` which would match the
 following strings (matches underlined with `~`):
 
 ```
-Title: hello world
-       ~~~~~~~~~~~
+Title: HelloWorld
+       ~~~~~~~~~~
 ```
 
 ```
@@ -48,9 +48,8 @@ be implemented with additional memory.
 We implemented the streaming algorithm presented in Section 4.4 of the paper
 mentioned above. The algorithm works by running the sub-automata for any
 look-behind expressions in parallel to the main automaton. This is achieved by
-compiling the look-behind expressions as usual but patching the resulting NFA
-states into a union with the main automaton's states. The union is added per
-pattern for multi-pattern searches.
+compiling the look-behind expressions as usual but storing their start states
+separately, not reachable from the main automaton.
 
 Instead of a `match` state, the sub-automata for look-behinds have a
 `WriteLookAround` state. This state causes the current position in the haystack
@@ -61,6 +60,11 @@ then read from this table by means of a `CheckLookAround` instruction and
 compare the stored index with the current position in the haystack. These states
 work as conditional epsilon transitions, similar to the already supported "look"
 assertions (e.g. `^`, `\b`, `$`).
+
+`PikeVM`s cache has been expanded to preserve good performance of single-match
+searches (stop the look-around threads once the main automaton finishes) and of
+all-matches searches (remember the look-around states when resuming a search to
+prevent having to rescan the haystack from the beginning).
 
 ## Testing
 
