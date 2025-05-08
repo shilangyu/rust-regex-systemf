@@ -74,3 +74,7 @@
 
 # Week 10 (easter break)
 - Implemented faster matchall by means of storing lb thread states in cache
+
+# Week 11
+- Cleaned up documentation
+- Finalized rebar modifications to allow for performance comparison
