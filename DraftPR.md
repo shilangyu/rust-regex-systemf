@@ -14,7 +14,7 @@ Title: Title: foo
               ~~~
 ```
 
-But **fails** to match:
+But **does not** match:
 
 - `No heading`
 - `title: bad case`
@@ -38,10 +38,11 @@ nesting. With the following limitations
 - The algorithm is implemented only in the PikeVM and with prefiters off
 - Only look-behinds and no look-aheads
 
-With the current capture group semantics, no linear time algorithm which would
-allow for capture groups in look-arounds is known. However, look-behinds could
-be implemented in other engines and with prefilters on. Look-aheads could also
-be implemented with additional memory.
+Capture groups outside of look-arounds are supported. With the current capture
+group semantics, no linear time algorithm which would allow for capture groups
+inside of look-arounds is known. However, look-behinds could be implemented in
+other engines and with prefilters on. Look-aheads could also be implemented with
+additional memory.
 
 ## How
 
@@ -61,7 +62,7 @@ compare the stored index with the current position in the haystack. These states
 work as conditional epsilon transitions, similar to the already supported "look"
 assertions (e.g. `^`, `\b`, `$`).
 
-`PikeVM`s cache has been expanded to preserve good performance of single-match
+`PikeVM`'s cache has been expanded to preserve good performance of single-match
 searches (stop the look-around threads once the main automaton finishes) and of
 all-matches searches (remember the look-around states when resuming a search to
 prevent having to rescan the haystack from the beginning).
@@ -109,7 +110,7 @@ rust/regex             1.11.0   1.01                            341
 rust/regex-lookbehind  1.12.0   1.03                            341
 ```
 
-Note: We noticed a discrepancy accross multiple runs of up to 1.51 when comparing the
+Note: We noticed a discrepancy across multiple runs of up to 1.51 when comparing the
 current version of `rust/regex`:
 
 ```
@@ -120,7 +121,7 @@ hyperscan/literal-russian-som  36.3 GB/s (1.51x)  54.9 GB/s (1.00x)
 ```
 
 Due to this result, we conclude that, despite the highest speedup ratio being 1.57 when
-comparing both engines accross both runs, the results of all individual benchmarks
+comparing both engines across both runs, the results of all individual benchmarks
 further strengthen the claim that our changes do not significantly impact performance.
 
 <details>
@@ -536,5 +537,10 @@ Please follow these instructions to reproduce our results:
    on a debian/ubuntu system, you can install them easily by running
    `./benchmark_lookbehind.sh --install` (requires root privileges).
 1. Execute `./benchmark_lookbehind.sh` to run the benchmark.
-1. Find the results in the files `results_full.csv` and `results_lookbehind.csv`,
-   which are placed in the directory containing the rebar fork.
+1. Find the results in the files `results_full.csv` and
+   `results_lookbehind.csv`, which are placed in the directory containing the
+   rebar fork.
+
+## Acknowledgements
+
+This effort was supervised by [Aurèle Barrière](https://aurele-barriere.github.io) and [Clément Pit-Claudel](https://pit-claudel.fr/clement/) at EPFL's [SYSTEMF](https://systemf.epfl.ch/).
