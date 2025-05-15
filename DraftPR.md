@@ -473,6 +473,7 @@ wild/rustsec-cargo-audit/both-alternate                    30.6 GB/s (1.01x)    
 wild/url/compile                                           2.80ms (1.00x)        2.83ms (1.01x)         2.85ms (1.02x)              2.80ms (1.00x)
 wild/url/search                                            110.8 MB/s (1.00x)    109.3 MB/s (1.01x)     109.0 MB/s (1.02x)          110.6 MB/s (1.00x)
 ```
+
 </details>
 
 ### Results with look-behinds
@@ -514,6 +515,7 @@ lookbehind/snort/linear-haystack-many-100000  32.7 MB/s (1.00x)   15.4 MB/s (2.1
 </details>
 
 A few things to note:
+
 1. The regexes in `snort-0` and `snort-4` are the only ones where there is an
    opportunity for prefix acceleration, which we haven't implemented currently.
    This explains the huge difference in speedup compared to all other regexes.
@@ -543,4 +545,4 @@ Please follow these instructions to reproduce our results:
 
 ## Acknowledgements
 
-This effort was supervised by [Aurèle Barrière](https://aurele-barriere.github.io) and [Clément Pit-Claudel](https://pit-claudel.fr/clement/) at EPFL's [SYSTEMF](https://systemf.epfl.ch/).
+This was a joint effort by @multimodcrafter and @shilangyu, supervised by [Aurèle Barrière](https://aurele-barriere.github.io) and [Clément Pit-Claudel](https://pit-claudel.fr/clement/) at EPFL's [SYSTEMF](https://systemf.epfl.ch/).
