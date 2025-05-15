@@ -496,6 +496,7 @@ available, hence easy to benchmark, and used ubiquitously.
 
 <details>
    <summary>Look-behind benchmark comparison</summary>
+   
 ```
 $ rebar cmp results_full_combined.csv -f 'lookbehind' -e '[^2]$'
 benchmark                                     python/re           rust/regex-lookbehind
