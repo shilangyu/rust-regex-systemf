@@ -517,7 +517,7 @@ lookbehind/snort/linear-haystack-many-100000  32.7 MB/s (1.00x)   15.4 MB/s (2.1
 A few things to note:
 
 1. The regexes in `snort-0` and `snort-4` are the only ones where there is an
-   opportunity for prefix acceleration, which we haven't implemented currently.
+   opportunity for prefiltering based on a prefix literal, which we haven't implemented currently.
    This explains the huge difference in speedup compared to all other regexes.
 2. For regexes containing no look-behinds, there are a few benchmarks where the
    speedup ratio between `pyhton/re` and `rust/*` is similar to the values seen
