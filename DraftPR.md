@@ -524,6 +524,8 @@ A few things to note:
    here (e.g. `imported/sherlock/everything-greedy-nl`, `curated/08-words/long-russian`).
    We therefore conclude that the baseline performance for regexes with
    look-behinds is reasonable.
+3. The constant throughput in the `linear-haystack` benchmarks shows that our
+   algorithm indeed runs in linear time.
 
 ### How to reproduce
 
