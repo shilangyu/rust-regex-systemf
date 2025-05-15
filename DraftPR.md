@@ -481,8 +481,7 @@ wild/url/search                                            110.8 MB/s (1.00x)   
 To get an estimate for performance of "real-world regexes" using look-behinds,
 we extracted all regexes that contain look-behind expressions from the `snort`
 ruleset. We chose this as a source of regexes because it has been used as a
-benchmark for look-arounds before in the works of Konstantinos Mamouras et al.:
-[Efficient Matching of Regular Expressions with Lookaround Assertions.](https://dl.acm.org/doi/10.1145/3632934)
+benchmark for look-arounds before in [Efficient Matching of Regular Expressions with Lookaround Assertions.](https://dl.acm.org/doi/10.1145/3632934)
 
 Unfortunately, this ruleset is licensed in a way that prohibits us from
 distributing it. See the reproduction section below to learn where to get the
@@ -492,11 +491,13 @@ Furthermore, we wrote a couple of very simple benchmarks to demonstrate that
 our implementation respects linearity.
 
 We chose to compare our implementation to `python/re`, as this engine is readily
-available, hence easy to benchmark, and used ubiquitously.
+available, hence easy to benchmark, and used ubiquitously. Note, however, that
+`python/re` only supports bounded length look-behinds, while our implementation
+supports unbounded ones as well.
 
 <details>
    <summary>Look-behind benchmark comparison</summary>
-   
+
 ```
 $ rebar cmp results_full_combined.csv -f 'lookbehind' -e '[^2]$'
 benchmark                                     python/re           rust/regex-lookbehind
