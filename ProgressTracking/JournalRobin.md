@@ -78,3 +78,9 @@
 # Week 11
 - Cleaned up documentation
 - Finalized rebar modifications to allow for performance comparison
+
+# Week 12
+- Analyzed benchmark results and prepared explanations for large differences to python/re
+
+# Week 13
+- Start implementation of backtracking by way of NFA reversal
