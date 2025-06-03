@@ -84,3 +84,11 @@
 
 # Week 13
 - Start implementation of backtracking by way of NFA reversal
+- Unsure how to implement actual backtracking with memoization
+
+# Week 14
+- Implemented working backtracking solution with HashMap for memoization
+
+# Week 15
+- Implemented bitvector memoization variant, which is considerably faster
+  than the pikevm, but not linear for matchall, due to the resetting of the bitvector
